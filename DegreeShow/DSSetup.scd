@@ -43,13 +43,13 @@ Make a circular buffer to interpret changing values as volumes of samples to int
 
 
 */
-d[\tome].play
+
 (
 o=ServerOptions.new;
 s.options=o;
 Server.local.options.memSize * 128;
 s.options.numBuffers=4000;
-// s.boot;
+s.boot;
 c=NanoKontrol.new;
 p=ProxySpace.push(s);
 p.makeTempoClock;
@@ -74,6 +74,12 @@ d.add(\tome2 ->
 	Buffer.read(s,"~/diskouttest.aiff".standardizePath));
 d.add(\water ->
 	PathName("/home/smc/src/github/tome/sounds/Water Field Recordings").entries.collect({
+		arg sf;
+		Buffer.read(s,sf.fullPath);
+	});
+);
+d.add(\organ ->
+	PathName("/home/smc/src/github/tome/sounds/Organ").entries.collect({
 		arg sf;
 		Buffer.read(s,sf.fullPath);
 	});

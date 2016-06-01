@@ -118,16 +118,17 @@ OSCdef(\z3, {|msg| b.sendMsg("/l3b/",msg[1].linlin(-14000,14000,-100,255).asInt)
 OSCdef(\x4, {|msg| b.sendMsg("/l4r/",msg[1].linlin(-14000,14000,-100,255).asInt)},\x);
 OSCdef(\y4, {|msg| b.sendMsg("/l4g/",msg[1].linlin(-14000,14000,-100,255).asInt)},\y);
 OSCdef(\z4, {|msg| b.sendMsg("/l4b/",msg[1].linlin(-14000,14000,-100,255).asInt)},\z);
-OSCdef(\m1, {|msg| b.sendMsg("/l1m/",msg[1].linlin(-12000,12000,-10,200).asInt)},\z1);
-OSCdef(\m2, {|msg| b.sendMsg("/l2m/",msg[1].linlin(-12000,12000,-10,200).asInt)},\z1);
-OSCdef(\m3, {|msg| b.sendMsg("/l3m/",msg[1].linlin(-12000,12000,-10,200).asInt)},\z1);
-OSCdef(\m4, {|msg| b.sendMsg("/l4m/",msg[1].linlin(-12000,12000,-10,200).asInt)},\z1);
+OSCdef(\m1, {|msg| b.sendMsg("/l1m/",msg[1].linlin(-12000,12000,-10,255).asInt)},\z1);
+OSCdef(\m2, {|msg| b.sendMsg("/l2m/",msg[1].linlin(-12000,12000,-10,255).asInt)},\z1);
+OSCdef(\m3, {|msg| b.sendMsg("/l3m/",msg[1].linlin(-12000,12000,-10,255).asInt)},\z1);
+OSCdef(\m4, {|msg| b.sendMsg("/l4m/",msg[1].linlin(-12000,12000,-10,255).asInt)},\z1);
 )
 
 ~fund = 900
 
 
 //Commendation, bright light and low rumble
+//after the third knob has been raked up
 (
 Task({
 	1.do({
@@ -135,10 +136,12 @@ Task({
 		~warp2.stop;
 		~warp3.stop;
 		~kick.stop;
+		~drn0.stop;
 		~snare.stop;
 		~splash.stop;
 		~fund.fadeTime=2;
 		~fund = 1;
+		~env = 20;
 		2.wait;
 		OSCdef(\xl, {|msg| b.sendMsg("/l1r/",255)},\x);
 		OSCdef(\yl, {|msg| b.sendMsg("/l1g/",255)},\y);

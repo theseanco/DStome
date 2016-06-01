@@ -109,16 +109,39 @@ q = { |in|
 };
 );
 
+EnvGen.ar(Env.perc(0.01,0.1),Impulse.kr(~tempo*5))
+
 //NOTE; The first text takes one minute to reach full volume.
+//FADER 1 MINIMUM
+//FADER 2 MINIMUM
+//FADER 3 MINIMUM
+
+//move up knob 1 while moving up faders 1 and 2
+//when knob 1 is full, turn down faders 1 and 2
+//then turn up knob 2, turn up faders 1 and 2, then release envelope with fader 3
+//then turn up knob 3 when charlie does the crab
+//BUT SWITCH TO THE LIGHTS, WHEN CHARLIE DOES THE CRAB AND I'VE TURNED UP KNOB 3
+
+
 (
 ~intensity = 0.5;
 c.fader1.onChanged = {|val| "intensity = ".post; ~intensity = val.linlin(0,127,0.5,4).postln};
+~env = 0.5;
+c.fader2.onChanged = {|val| "envelope = ".post; ~env = val.linlin(0,127,0.5,3).postln};
+c.fader3.onChanged = {|val| "envelopeMAX = ".post; ~env = val.linlin(0,127,3,10).postln};
+~drn0 = {SinOsc.ar([~fund,~fund*1.1],0,0.1)};
 ~drn1.play;
-~drn1 = {arg intensity = ~intensity, amp= 0.8; DFM1.ar(SinOsc.ar([~fund+LFNoise1.kr(0.1),~fund+LFNoise1.kr(0.1)],0,0.3),[~fund,~fund*1.02],Saw.kr(LFNoise1.kr(0.1)).range(0.01,~intensity),1,0,0.00002,amp)};
-~drn2 = {arg intensity = ~intensity, amp=1; DFM1.ar(SinOsc.ar([(~fund*2)+LFNoise1.kr(0.1),(~fund*2)+LFNoise1.kr(0.1)],0,0.3),[~fund*2,(~fund*2)*1.01],Saw.kr(LFNoise1.kr(0.1)).range(0.01,~intensity),1,0,0.00002,amp)};
-~drn3 = {arg intensity1 = ~intensity*2, intensity2 = ~intensity, amp=0.5; DFM1.ar(DFM1.ar(SinOsc.ar([~fund+LFNoise1.kr(0.1),~fund+LFNoise1.kr(0.1)],0,0.3),[~fund*2.5,(~fund*2.5)*1.01],Saw.kr(LFNoise1.kr(0.1)).range(0.01,~intensity*2),1,0,0.00002,0.2),~fund*2.5,LFNoise1.kr(0.4,~intensity).abs,1,0,0.0001,amp)};
-~drnx = {arg amp=0.1; Pan2.ar(DFM1.ar(WhiteNoise.ar(0.5),LFNoise1.kr(1).range(~fund,~fund*20).round(~fund*2),LFNoise1.kr(0.2,2).abs,1,0,0.004,amp))};
-~drn5 = {arg amp=0.04; Pan2.ar(Mix.ar(DFM1.ar(SinOsc.ar(~fund,0,0.1),[5,10,15,20,25,30,35]*~fund,LFNoise1.kr([0.1,0.11,0.12,0.13,0.14,0.15,0.16],4),1,0,0.00004,amp)))};
+~drn0.play;
+~drn1 = {arg intensity = ~intensity, amp= 0.8; DFM1.ar(SinOsc.ar([~fund+SinOsc.kr(0.2),~fund],0,0.3),[~fund+SinOsc.kr(0.2),~fund],Saw.kr(SinOsc.kr(0.7)).range(0.01,~intensity),1,0,0.00002,amp)*EnvGen.ar(Env.perc(0.01,~env),Impulse.kr(~tempo))};
+
+~drn2 = {arg intensity = ~intensity, amp=1; DFM1.ar(SinOsc.ar([(~fund*2)+LFNoise1.kr(0.1),(~fund*2)+LFNoise1.kr(0.1)],0,0.3),[~fund*2,(~fund*2)*1.01],Saw.kr(LFNoise1.kr(0.1)).range(0.01,~intensity),1,0,0.00002,amp)*EnvGen.ar(Env.perc(0.01,~env),Impulse.kr(~tempo*2))};
+
+~drn3 = {arg intensity1 = ~intensity*2, intensity2 = ~intensity, amp=0.5; DFM1.ar(DFM1.ar(SinOsc.ar([~fund+LFNoise1.kr(0.1),~fund+LFNoise1.kr(0.1)],0,0.3),[~fund*2.5,(~fund*2.5)*1.01],Saw.kr(LFNoise1.kr(0.1)).range(0.01,~intensity*2),1,0,0.00002,0.2),~fund*2.5,LFNoise1.kr(0.4,~intensity).abs,1,0,0.0001,amp)*EnvGen.ar(Env.perc(0.01,~env*0.2),Impulse.kr(~tempo*3))};
+
+~drnx = {arg amp=0.1; Pan2.ar(DFM1.ar(WhiteNoise.ar(0.5),LFNoise1.kr(1).range(~fund,~fund*20).round(~fund*2),LFNoise1.kr(0.2,2).abs,1,0,0.004,amp))*EnvGen.ar(Env.perc(0.01,~env*0.1),Impulse.kr(~tempo*2))};
+
+~drn5 = {arg amp=0.04; Pan2.ar(Mix.ar(DFM1.ar(SinOsc.ar(~fund,0,0.1),[5,10,15,20,25,30,35]*~fund,LFNoise1.kr([0.1,0.11,0.12,0.13,0.14,0.15,0.16],4),1,0,0.00004,amp)))*EnvGen.ar(Env.perc(0.01,~env*0.2),Impulse.kr(~tempo*6))};
+
 ~warp1 = {arg amp = 2, posx = 0, posy = 0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,XLine.kr(0.00001,amp,60))};
 ~warp2 = {arg amp = 2, posx = -0.7, posy = 0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,amp)};
 ~warp3 = {arg amp = 2, posx = 0.7, posy = -0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,amp)};
@@ -131,9 +154,9 @@ OSCdef(\xdiff, {|msg| ~splash.set(\amp,q.(msg[1]))},\x1);
 );
 ~warp1.play;
 )
-
 ~warp1.stop
 
+~drn2.play
 //
 ~drn2.play;
 
@@ -149,6 +172,7 @@ OSCdef(\xdiff, {|msg| ~splash.set(\amp,q.(msg[1]))},\x1);
 
 ~warp3.play;
 
+~warp1.stop
 
 
 (
@@ -183,10 +207,12 @@ WAIT FOR CHARLIE TO RETURN TO THE CENTER
 
 ~drn5.play
 
-~kick = Pbind(\instrument,\bplay,\buf,d[\kick][0],\rate,0.5,\dur,Pwhite(0.25,1.5).round(0.25)*4,\amp,3)
+~kick = Pbind(\instrument,\bplay,\buf,d[\kick][2],\rate,0.5,\dur,Pwhite(0.25,1.5).round(0.25)*2,\amp,6)
 
-~snare = Pbind(\instrument,\bplay,\buf,d[\clap][1],\rate,0.7,\dur,Pwhite(0.25,1.5).round(0.25)*8,\amp,0.6)
+~snare = Pbind(\instrument,\bplay,\buf,d[\clap][1],\rate,0.7,\dur,Pwhite(0.25,1.5).round(0.25)*4,\amp,2)
 
+~snare.play
+~kick.play
 
 ~drn3.play
 
@@ -262,6 +288,15 @@ OSCdef(\xdiff, {|msg| ~splash.set(\amp,q.(msg[1]))},\x1);
 
 OSCFunc.trace(false)
 
+//TOME
+(
+~drn1.stop;
+~drn2.stop;
+~drn3.stop;
+~drnx.stop;
+~drn5.stop;
+)
+
 //COMMITTAL
 //Trigger this when the tome finishes
 (
@@ -272,10 +307,11 @@ OSCFunc.trace(false)
 ~drn3.stop(20);
 ~drnx.stop(20);
 ~drn5.stop(20);
+~drn0.stop(20);
 ~maxorganvol = 1.7;
-~organvol = {Line.kr(0,~maxorganvol,10)};
-~orgverb = {Line.kr(1,0,10)};
-~organ = {FreeVerb.ar(PlayBuf.ar(2,d[\organ][1],1,1,0,0,0)*~organvol,~orgverb,0.9,0.1)};
+~organvol = {XLine.kr(0.001,~maxorganvol,12)};
+~orgverb = {Line.kr(1,0.0,20)};
+~organ = {FreeVerb.ar(PlayBuf.ar(2,d[\organ][1],1,1,0,0,0)*~organvol,~orgverb,0.99,0.01)};
 ~organ.play;
 )
 
