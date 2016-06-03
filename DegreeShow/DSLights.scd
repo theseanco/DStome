@@ -104,6 +104,18 @@ OSCdef(\m3, {|msg| b.sendMsg("/l3m/",200)},\z1);
 OSCdef(\m4, {|msg| b.sendMsg("/l4m/",200)},\z1);
 )
 
+//FADE DOWN LIGHT MASTERS AT THE END OF THE TRIGGERING
+//LIGHT KNOB (9) AT FULL BEFORE YOU TRIGGER THIS!!!!!!!!!
+(
+OSCdef(\m1,{0});
+OSCdef(\m2,{0});
+OSCdef(\m3,{0});
+OSCdef(\m4,{0});
+//taking off suit
+c.knob9.onChanged = {|val| b.sendMsg("/l1m/", val.linlin(0,127,0,200).asInt); b.sendMsg("/l2m/", val.linlin(0,127,0,200).asInt); b.sendMsg("/l3m/", val.linlin(0,127,0,200).asInt); b.sendMsg("/l4m/", val.linlin(0,127,0,200).asInt);}
+)
+
+
 //prayer, including bix complex bit about the seven stages
 (
 OSCdef(\xl, {|msg| b.sendMsg("/l1r/",msg[1].linlin(-14000,14000,-100,255).asInt)},\x);
@@ -132,15 +144,18 @@ OSCdef(\m4, {|msg| b.sendMsg("/l4m/",msg[1].linlin(-12000,12000,-10,255).asInt)}
 (
 Task({
 	1.do({
-		~warp1.stop;
-		~warp2.stop;
-		~warp3.stop;
+		//WARPS HAVE BEEN CLEARED RATHER THAN STOPPED
+		~warp1.clear;
+		~warp2.clear;
+		~warp3.clear;
 		~kick.stop;
 		~drn0.stop;
 		~snare.stop;
 		~splash.stop;
+		~drn5.stop;
+		~drnx.stop;
 		~fund.fadeTime=2;
-		~fund = 1;
+		~fund = 4;
 		~env = 20;
 		2.wait;
 		OSCdef(\xl, {|msg| b.sendMsg("/l1r/",255)},\x);
@@ -171,6 +186,28 @@ s.scope
 //then the tome.
 //the word unknown is repeated, and gradually degraded
 
+(
+OSCdef(\xl, {|msg| b.sendMsg("/l1r/",255)},\x);
+OSCdef(\yl, {|msg| b.sendMsg("/l1g/",255)},\y);
+OSCdef(\zl, {|msg| b.sendMsg("/l1b/",255)},\z);
+OSCdef(\x2, {|msg| b.sendMsg("/l2r/",255)},\x);
+OSCdef(\y2, {|msg| b.sendMsg("/l2g/",255)},\y);
+OSCdef(\z2, {|msg| b.sendMsg("/l2b/",255)},\z);
+OSCdef(\x3, {|msg| b.sendMsg("/l3r/",255)},\x);
+OSCdef(\y3, {|msg| b.sendMsg("/l3g/",255)},\y);
+OSCdef(\z3, {|msg| b.sendMsg("/l3b/",255)},\z);
+OSCdef(\x4, {|msg| b.sendMsg("/l4r/",255)},\x);
+OSCdef(\y4, {|msg| b.sendMsg("/l4g/",255)},\y);
+OSCdef(\z4, {|msg| b.sendMsg("/l4b/",255)},\z);
+OSCdef(\m1, {|msg| b.sendMsg("/l1m/",255)},\z1);
+OSCdef(\m2, {|msg| b.sendMsg("/l2m/",255)},\z1);
+OSCdef(\m3, {|msg| b.sendMsg("/l3m/",255)},\z1);
+OSCdef(\m4, {|msg| b.sendMsg("/l4m/",255)},\z1);
+OSCdef(\m1, {|msg| b.sendMsg("/l1s/",0)},\z1);
+OSCdef(\m2, {|msg| b.sendMsg("/l2s/",0)},\z1);
+OSCdef(\m3, {|msg| b.sendMsg("/l3s/",0)},\z1);
+OSCdef(\m4, {|msg| b.sendMsg("/l4s/",0)},\z1);
+)
 
 
 //final words

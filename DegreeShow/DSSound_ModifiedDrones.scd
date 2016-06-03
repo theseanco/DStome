@@ -24,8 +24,6 @@ Something to consider, as the organ fades out do I fade IN a reverb on top? Some
 Don't forget to clear it because it will eat CPU later
 
 */
-
-p.fadeTime=3
 //trigger this when charlie finishes the tome.
 
 //OUR GRANDFATHERS MUSIC FADING INTO SOUNDTRACK
@@ -124,12 +122,16 @@ EnvGen.ar(Env.perc(0.01,0.1),Impulse.kr(~tempo*5))
 
 
 (
+~back1.stop(5);
+~back1x.stop(10);
+~back2.stop(20);
+~sun.stop(60);
 ~intensity = 0.5;
 c.fader1.onChanged = {|val| "intensity = ".post; ~intensity = val.linlin(0,127,0.5,4).postln};
 ~env = 0.5;
 c.fader2.onChanged = {|val| "envelope = ".post; ~env = val.linlin(0,127,0.5,3).postln};
 c.fader3.onChanged = {|val| "envelopeMAX = ".post; ~env = val.linlin(0,127,3,10).postln};
-~drn0 = {SinOsc.ar([~fund,~fund*1.1],0,0.1)};
+~drn0 = {SinOsc.ar([~fund,~fund*1.1],0,0.2)};
 ~drn1.play;
 ~drn0.play;
 ~drn1 = {arg intensity = ~intensity, amp= 0.8; DFM1.ar(SinOsc.ar([~fund+SinOsc.kr(0.2),~fund],0,0.3),[~fund+SinOsc.kr(0.2),~fund],Saw.kr(SinOsc.kr(0.7)).range(0.01,~intensity),1,0,0.00002,amp)*EnvGen.ar(Env.perc(0.01,~env),Impulse.kr(~tempo))};
@@ -142,9 +144,9 @@ c.fader3.onChanged = {|val| "envelopeMAX = ".post; ~env = val.linlin(0,127,3,10)
 
 ~drn5 = {arg amp=0.04; Pan2.ar(Mix.ar(DFM1.ar(SinOsc.ar(~fund,0,0.1),[5,10,15,20,25,30,35]*~fund,LFNoise1.kr([0.1,0.11,0.12,0.13,0.14,0.15,0.16],4),1,0,0.00004,amp)))*EnvGen.ar(Env.perc(0.01,~env*0.2),Impulse.kr(~tempo*6))};
 
-~warp1 = {arg amp = 2, posx = 0, posy = 0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,XLine.kr(0.00001,amp,60))};
-~warp2 = {arg amp = 2, posx = -0.7, posy = 0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,amp)};
-~warp3 = {arg amp = 2, posx = 0.7, posy = -0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,amp)};
+~warp1 = {arg amp = 2.5, posx = 0, posy = 0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,XLine.kr(0.00001,amp,60))};
+~warp2 = {arg amp = 2.5, posx = -0.7, posy = 0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,amp)};
+~warp3 = {arg amp = 2.5, posx = 0.7, posy = -0.5, pos = 0.01, rate = 1; Pan2.ar(Warp1.ar(1,d[\tome],pos+LFNoise1.kr(100,0.001),rate,0.2,interp:4),posx,amp)};
 OSCdef(\warpx,{|msg| ~warp1.set(\pos,msg[1].linlin(-16000,16000,0,1.0))},'/x');
 OSCdef(\warpy,{|msg| ~warp2.set(\pos,msg[1].linlin(-16000,16000,0,1.0))},'/y');
 OSCdef(\warpz,{|msg| ~warp3.set(\pos,msg[1].linlin(-16000,16000,0,1.0))},'/z');
@@ -156,7 +158,7 @@ OSCdef(\xdiff, {|msg| ~splash.set(\amp,q.(msg[1]))},\x1);
 )
 ~warp1.stop
 
-~drn2.play
+~drn2.play;
 //
 ~drn2.play;
 
@@ -299,6 +301,7 @@ OSCFunc.trace(false)
 
 //COMMITTAL
 //Trigger this when the tome finishes
+//TURN UP BASS ON MIXER!!!!!!
 (
 ~organvol.fadeTime=0;
 ~organvol= 0;
@@ -308,7 +311,7 @@ OSCFunc.trace(false)
 ~drnx.stop(20);
 ~drn5.stop(20);
 ~drn0.stop(20);
-~maxorganvol = 1.7;
+~maxorganvol = 2.6;
 ~organvol = {XLine.kr(0.001,~maxorganvol,12)};
 ~orgverb = {Line.kr(1,0.0,20)};
 ~organ = {FreeVerb.ar(PlayBuf.ar(2,d[\organ][1],1,1,0,0,0)*~organvol,~orgverb,0.99,0.01)};
